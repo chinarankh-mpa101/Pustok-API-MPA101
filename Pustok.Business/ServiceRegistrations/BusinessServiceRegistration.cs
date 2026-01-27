@@ -1,0 +1,22 @@
+﻿using Microsoft.Extensions.DependencyInjection;
+using Pustok.Business.Services.Abstractions;
+using Pustok.Business.Services.Implementations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Pustok.Business.ServiceRegistrations
+{
+    public static class BusinessServiceRegistration
+    {
+        public static IServiceCollection AddBusinessServices(this IServiceCollection services)
+        {
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddAutoMapper(_ => { }, typeof(BusinessServiceRegistration).Assembly);
+            return services;
+        }
+    }
+}
