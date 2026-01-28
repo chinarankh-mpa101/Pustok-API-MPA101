@@ -15,6 +15,8 @@ namespace Pustok.Business.ServiceRegistrations
         public static IServiceCollection AddBusinessServices(this IServiceCollection services)
         {
             services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
             services.AddAutoMapper(_ => { }, typeof(BusinessServiceRegistration).Assembly);
             return services;
         }

@@ -17,6 +17,7 @@ namespace Pustok.DataAccess.ServiceRegistrations
         public static IServiceCollection AddDataAccessServices(this IServiceCollection services,IConfiguration configuration)
         {
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddDbContext<AppDbContext>(opt =>
             {
                 opt.UseSqlServer(configuration.GetConnectionString("Default"));

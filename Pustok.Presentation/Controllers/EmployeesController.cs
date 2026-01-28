@@ -24,14 +24,14 @@ namespace Pustok.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] EmployeeCreateDto dto)
+        public async Task<IActionResult> Create([FromForm] EmployeeCreateDto dto)
         {
             await _employeeService.CreateAsync(dto);
             return Ok(); 
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] EmployeeUpdateDto dto)
+        public async Task<IActionResult> Update([FromForm] EmployeeUpdateDto dto)
         {
             await _employeeService.UpdateAsync(dto);
             return Ok();

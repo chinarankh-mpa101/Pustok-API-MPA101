@@ -15,7 +15,9 @@ namespace Pustok.Business.Services.Implementations
     internal class EmployeeService : IEmployeeService
     {
         private readonly IEmployeeRepository _repository;
+        private readonly IDepartmentRepository _departmentRepository;
         private readonly IMapper _mapper;
+        private readonly ICloudinaryService _cloudInaryService;
         public EmployeeService(IEmployeeRepository repository, IMapper mapper)
         {
             _repository = repository;
@@ -26,7 +28,17 @@ namespace Pustok.Business.Services.Implementations
 
         public async Task CreateAsync(EmployeeCreateDto dto)
         {
+            var isExistDepartment = await _departmentRepository.AnyAsync(x => x.Id == dto.DepartmentId);
+
+            if (!isExistDepartment)
+                throw new NotFoundException("Department is not found");
+
+
             var employee = _mapper.Map<Employee>(dto);
+            var imagePath = await _cloudInaryService.FileUploadAsync(dto.Image);
+
+
+            employee.ImagePath = imagePath;
             await _repository.AddAsync(employee);
             await _repository.SaveChangesAsync();
         }
@@ -36,6 +48,8 @@ namespace Pustok.Business.Services.Implementations
             var employee = await _repository.GetByIdAsync(id);
             if (employee is null)
                 throw new NotFoundException("Employee is not found");
+
+            await _cloudInaryService.FileDeleteAsync(employee.ImagePath);
             _repository.Delete(employee);
             await _repository.SaveChangesAsync();
         }
@@ -58,10 +72,22 @@ namespace Pustok.Business.Services.Implementations
 
         public async Task UpdateAsync(EmployeeUpdateDto dto)
         {
+            var isExistDepartment = await _departmentRepository.AnyAsync(x => x.Id == dto.DepartmentId);
+
+            if (!isExistDepartment)
+                throw new NotFoundException("Department is not found");
+
             var existEmployee = await _repository.GetByIdAsync(dto.Id);
             if (existEmployee is null)
                 throw new NotFoundException("Employee is not found");
+
             existEmployee = _mapper.Map(dto, existEmployee);
+            if(dto.Image is { })
+            {
+                await _cloudInaryService.FileDeleteAsync(existEmployee.ImagePath);
+                var imagePath = await _cloudInaryService.FileUploadAsync(dto.Image);
+                existEmployee.ImagePath = imagePath;
+            }
             _repository.Update(existEmployee);
             await _repository.SaveChangesAsync();
         }
