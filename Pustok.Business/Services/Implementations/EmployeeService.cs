@@ -26,7 +26,7 @@ namespace Pustok.Business.Services.Implementations
 
       
 
-        public async Task CreateAsync(EmployeeCreateDto dto)
+        public async Task<ResultDto> CreateAsync(EmployeeCreateDto dto)
         {
             var isExistDepartment = await _departmentRepository.AnyAsync(x => x.Id == dto.DepartmentId);
 
@@ -41,9 +41,10 @@ namespace Pustok.Business.Services.Implementations
             employee.ImagePath = imagePath;
             await _repository.AddAsync(employee);
             await _repository.SaveChangesAsync();
+            return new ResultDto();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task<ResultDto> DeleteAsync(Guid id)
         {
             var employee = await _repository.GetByIdAsync(id);
             if (employee is null)
@@ -52,25 +53,30 @@ namespace Pustok.Business.Services.Implementations
             await _cloudInaryService.FileDeleteAsync(employee.ImagePath);
             _repository.Delete(employee);
             await _repository.SaveChangesAsync();
+            return new();
         }
 
-        public async Task<List<EmployeeGetDto>> GetAllAsync()
+        public async Task<ResultDto<List<EmployeeGetDto>>> GetAllAsync()
         {
             var employees = await _repository.GetAll().Include(x => x.Department).ToListAsync();
             var dtos = _mapper.Map<List<EmployeeGetDto>>(employees);
-            return dtos;
+            return new()
+            {
+                Data = dtos
+            };
         }
 
-        public async Task<EmployeeGetDto?> GetByIdAsync(Guid id)
+        public async Task<ResultDto<EmployeeGetDto>> GetByIdAsync(Guid id)
         {
             var employee = await _repository.GetByIdAsync(id);
             if (employee is null)
                 throw new NotFoundException("Employee is not found");
             var dto = _mapper.Map<EmployeeGetDto>(employee);
-            return dto;
+
+            return new() { Data = dto, Message = "Get By id is Successfuly" };
         }
 
-        public async Task UpdateAsync(EmployeeUpdateDto dto)
+        public async Task<ResultDto> UpdateAsync(EmployeeUpdateDto dto)
         {
             var isExistDepartment = await _departmentRepository.AnyAsync(x => x.Id == dto.DepartmentId);
 
@@ -90,6 +96,7 @@ namespace Pustok.Business.Services.Implementations
             }
             _repository.Update(existEmployee);
             await _repository.SaveChangesAsync();
+            return new("Update is successfully");
         }
     }
 }

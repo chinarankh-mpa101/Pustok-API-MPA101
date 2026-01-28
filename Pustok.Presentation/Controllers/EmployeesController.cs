@@ -12,37 +12,37 @@ namespace Pustok.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var employees = await _employeeService.GetAllAsync();
-            return Ok(employees);
+            var result = await _employeeService.GetAllAsync();
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var employees = await _employeeService.GetByIdAsync(id);
-            return Ok(employees);
+            var result = await _employeeService.GetByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] EmployeeCreateDto dto)
         {
-            await _employeeService.CreateAsync(dto);
-            return Ok(); 
+            var result=await _employeeService.CreateAsync(dto);
+            return Ok(result); 
         }
 
         [HttpPut]
         public async Task<IActionResult> Update([FromForm] EmployeeUpdateDto dto)
         {
-            await _employeeService.UpdateAsync(dto);
-            return Ok();
+            var result=await _employeeService.UpdateAsync(dto);
+            return Ok(result);
         }
 
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _employeeService.DeleteAsync(id);
-            return Ok();
+            var result=await _employeeService.DeleteAsync(id);
+            return Ok(result);
         }
     }
 }
